@@ -1,33 +1,38 @@
 var Paginator = Class.create({
   initialize: function(element) {
 		this.page_size = 10;
-		this.page_number = 1;
 	
     this.container_element = $(element);
     this.items = this.container_element.immediateDescendants();
+
+		this.page_number = 1;
+		this.items.each(function(e, i) {
+			if (e.hasClassName('selected')) {
+				this.page_number = this._parsePageNumber(i + 1, this.page_size);
+			}
+		}.bind(this));
 		
 		// total pages
-    this.last_page = parseInt(this.items.size() / this.page_size);
-		if (this.items.size() % this.page_size) this.last_page++;
+    this.last_page = this._parsePageNumber(this.items.size(), this.page_size);
 
-    this.pior_link = new Element('a', { href: '' }).update('Pior');
-    Event.observe(this.pior_link, 'click', this._pior.bind(this));
+    this.prior_link = new Element('a', { href: '' }).update('Prior');
+    Event.observe(this.prior_link, 'click', this._prior.bind(this));
     
     this.next_link = new Element('a', { href: '' }).update('Next');
     Event.observe(this.next_link, 'click', this._next.bind(this));
     
     this.container_element.insert({
-      top: new Element('li', { 'class': 'pior' }).insert(this.pior_link)
+      top: new Element('li', { 'class': 'prior' }).insert(this.prior_link)
     });
     
     this.next_element = this.container_element.insert({
       bottom: new Element('li', { 'class': 'next' }).insert(this.next_link)
     });
 
-		this.page(1);
+		this.page(this.page_number);
   },
   
-  pior: function() {
+  prior: function() {
     return this.page(this.page_number - 1);
   },
 
@@ -60,9 +65,9 @@ var Paginator = Class.create({
 
 	_checkBoundaries: function() {
 		if (this.page_number == 1) { 
-			this.pior_link.addClassName('disabled');
+			this.prior_link.addClassName('disabled');
 		} else {
-			this.pior_link.removeClassName('disabled');
+			this.prior_link.removeClassName('disabled');
 		}
 
 		if (this.page_number == this.last_page) { 
@@ -72,12 +77,18 @@ var Paginator = Class.create({
 		}
 	},
   
-  _pior: function(ev) {
-    try { this.pior(); } finally { ev.stop(); }
+  _prior: function(ev) {
+    try { this.prior(); } finally { ev.stop(); }
   },
   
   _next: function(ev) {
     try { this.next(); } finally { ev.stop(); }
-  }
+  },
+
+	_parsePageNumber: function(items_count, items_per_page) {
+    var page_number = parseInt(items_count / items_per_page);
+		if (items_per_page % items_count) page_number++;
+		return page_number;
+	}
 
 });
