@@ -1,4 +1,5 @@
 var Paginator = Class.create({
+  
   initialize: function(element) {
     this.page_size = 10;
   
