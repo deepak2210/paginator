@@ -4,7 +4,7 @@ require 'rake/packagetask'
 ROOT     = File.expand_path(File.dirname(__FILE__))
 SRC_DIR  = File.join(ROOT, 'src')
 DIST_DIR = File.join(ROOT, 'dist')
-VERSION  = '0.1'
+PAGINATOR_VERSION  = '0.1'
 
 task :default => [:test]
 
@@ -17,9 +17,9 @@ task :dist do
   $:.unshift File.join(ROOT, 'lib')
   require 'protodoc'
   
-  mkdir DIST_DIR
+  mkdir DIST_DIR rescue
   Dir.chdir(SRC_DIR) do
-    File.open(File.join(DIST_DIR, 'paginator.js'), 'w+') do |dist|
+    File.open(File.join(DIST_DIR, "paginator-#{PAGINATOR_VERSION}.js"), 'w+') do |dist|
       dist << Protodoc::Preprocessor.new('paginator.js')
     end
   end
