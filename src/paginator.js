@@ -97,7 +97,7 @@ var Paginator = Class.create({
 
   _parsePageNumber: function(items_count, items_per_page) {
     var page_number = parseInt(items_count / items_per_page);
-    if (items_per_page % items_count) page_number++;
+    if (items_count % items_per_page) page_number++;
     return page_number;
   },
   
